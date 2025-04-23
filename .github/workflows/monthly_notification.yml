@@ -8,7 +8,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  check-month-end:
+    name: Determine if today is the last business day
+    runs-on: ubuntu-latest
+    outputs:
+      is_last_business_day: ${{ steps.month_end_action.outputs.is_last_business_day }}
+      year_month: ${{ steps.month_end_action.outputs.year_month }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Run month-end determination
+        id: month_end_action
+        uses: ./
+        
+      - name: Show result
+        run: |
+          echo "Is last business day: ${{ steps.month_end_action.outputs.is_last_business_day }}"
+          echo "Year and month: ${{ steps.month_end_action.outputs.year_month }}"
+
   send-notification:
+    name: Send notification
+    needs: check-month-end
+    if: needs.check-month-end.outputs.is_last_business_day == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,14 +47,16 @@ jobs:
           gem install holiday_japan
           gem install json
           
-      - name: Check if today is the last business day of month
-        id: check_day
+      - name: Run notification script
         run: |
-          # main.rbを実行して環境変数を設定
-          ruby main.rb >> $GITHUB_ENV
+          # Set the environment variable from the previous job
+          export IS_LAST_BUSINESS_DAY=${{ needs.check-month-end.outputs.is_last_business_day }}
+          export YEAR_MONTH="${{ needs.check-month-end.outputs.year_month }}"
+          
+          # Run the notification script
+          ruby bin/send_notification.rb
         
       - name: Send email notification
-        if: env.IS_LAST_BUSINESS_DAY == 'true'
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -45,7 +69,6 @@ jobs:
           body: ${{ env.EMAIL_BODY }}
           
       - name: Commit logs
-        if: env.IS_LAST_BUSINESS_DAY == 'true'
         run: |
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'actions@github.com'
