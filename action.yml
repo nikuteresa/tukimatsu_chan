@@ -1,0 +1,42 @@
+name: 'Month-End Determination'
+description: 'Determines if today is the last business day of the month'
+author: 'nikuteresa'
+branding:
+  icon: 'calendar'
+  color: 'blue'
+
+outputs:
+  is_last_business_day:
+    description: 'True if today is the last business day of the month'
+  year_month:
+    description: 'Current year and month (e.g., 2025年4月)'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: '3.2'
+        bundler-cache: true
+      
+    - name: Install dependencies
+      shell: bash
+      run: |
+        gem install holiday_japan
+        gem install json
+        
+    - name: Run month-end determination
+      id: check_month_end
+      shell: bash
+      run: |
+        # Run the month-end determination script
+        ruby ${{ github.action_path }}/bin/determine_month_end.rb
+      
+    - name: Set output variables
+      id: set_output
+      shell: bash
+      run: |
+        # These values are set by the Ruby script as environment variables
+        echo "is_last_business_day=$IS_LAST_BUSINESS_DAY" >> $GITHUB_OUTPUT
+        echo "year_month=$YEAR_MONTH" >> $GITHUB_OUTPUT
