@@ -79,6 +79,26 @@ GitHub Actions により、毎日JST 18:00に自動実行されます。最終�
 
 手動で GitHub Actions ワークフローを実行するには、GitHub リポジトリの Actions タブから "Monthly End Notification" ワークフローを選択し、"Run workflow" ボタンをクリックします。
 
+## テスト
+
+テストは RSpec を使用して実装されています。テストを実行するには：
+
+```bash
+# すべてのテストを実行
+bundle exec rspec
+
+# 特定のテストファイルのみ実行
+bundle exec rspec spec/lib/business_day_calculator_spec.rb
+
+# テストカバレッジレポートを生成（結果は coverage/ ディレクトリに保存）
+COVERAGE=true bundle exec rspec
+```
+
+### テスト構成
+
+- `spec/lib/` - 各クラスの単体テスト
+- `spec/support/` - テスト用のヘルパーメソッド
+
 ## ログ
 
 通知履歴は `logs/notification_log.json` に記録されます。
