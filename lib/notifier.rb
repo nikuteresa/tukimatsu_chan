@@ -35,7 +35,9 @@ class Notifier
 
   # 件名を生成
   def generate_subject
-    "#{date.year}年#{date.month}月の月末のお知らせ"
+    # 環境変数からYEAR_MONTHが設定されていればそれを使用、なければdate属性から生成
+    year_month = ENV['YEAR_MONTH'] || "#{date.year}年#{date.month}月"
+    "#{year_month}の月末のお知らせ"
   end
 
   # 本文を生成
