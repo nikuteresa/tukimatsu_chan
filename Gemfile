@@ -5,4 +5,3 @@ gem 'holiday_japan'
 
 # 基本ライブラリ
 gem 'json'
-gem 'yaml'
