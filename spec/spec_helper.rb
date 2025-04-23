@@ -1,10 +1,14 @@
 require 'simplecov'
-SimpleCov.start do
-  add_filter "/spec/"
+if ENV['COVERAGE']
+  SimpleCov.start do
+    add_filter "/spec/"
+  end
+  puts "Running with SimpleCov..."
 end
 
 require 'timecop'
 require 'webmock/rspec'
+require 'fileutils'
 
 # ローカル環境のみでWebMockを有効にする
 WebMock.disable_net_connect!(allow_localhost: true)
