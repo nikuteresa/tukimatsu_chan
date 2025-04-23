@@ -56,17 +56,13 @@ jobs:
           # Run the notification script
           ruby bin/send_notification.rb
         
-      - name: Send email notification
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: ${{ env.EMAIL_SUBJECT }}
-          to: ${{ env.EMAIL_TO }}
-          from: ${{ secrets.MAIL_FROM }}
-          body: ${{ env.EMAIL_BODY }}
+      - name: Log notification preparation
+        run: |
+          echo "通知が準備されました"
+          echo "Subject: ${{ env.EMAIL_SUBJECT }}"
+          echo "To: ${{ env.EMAIL_TO }}"
+          
+      # メール送信部分は削除
           
       - name: Commit logs
         run: |
