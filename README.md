@@ -1,61 +1,115 @@
-# 月末自動通知ツール 要件定義書
+# getsumatsu_kun (月末くん)
 
-## 1. 通知内容と目的
-決定事項：
-- メールを送信する
-- 本文には「月末です」という内容を含める
+月末の最終営業日に通知を送信する自動ツールです。
 
-## 2. 通知方法
-決定事項：
-- 送信元メールアドレス: no-reply.me@no.reply のような形式
-- 送信先メールアドレス: 設定ファイルから読み込む（配列対応）
-- 件名: 日付を含めた動的な件名 (例: "2025年4月の月末のお知らせ")
-- 将来的にSlack通知も追加予定
+## 概要
 
-## 3. 通知タイミング
-決定事項：
-- 月の最終営業日に通知
-- 通知時間は18時をデフォルトとするが、設定で変更可能にする
-- 頻度：毎月の最終営業日に1回
+月末くんは、毎月の最終営業日を自動的に判定し、指定された宛先にメールで通知を送信するシンプルなツールです。GitHub Actionsを使用して定期的に実行され、祝日や土日を考慮して最終営業日を判定します。
 
-## 4. 通知対象者
-決定事項：
-- 一旦個人用として実装
-- 送信先メールアドレスは配列で複数対応できるように実装
+## 機能
 
-## 5. サーバー/インフラ
-決定事項：
-- GitHub Actionsを使用
-- 定期的なワークフローとして実行
-- コード管理と一元化できる利点あり
+- 最終営業日の自動判定（土日祝日を除外）
+- 指定した複数のメールアドレスに通知
+- 通知履歴のログ記録
+- GitHub Actionsでの定期実行
 
-## 6. データ保存
-決定事項：
-- 設定形式: YAMLファイル
-- 通知履歴: JSONフォーマットのログファイルに記録
+## インストール方法
 
-## 7. 認証/セキュリティ
-決定事項：
-- メール送信サービス: GitHub Actionsマーケットプレイスの「dawidd6/action-send-mail」アクションを利用
-- 認証情報: GitHub Secretsに保存
+```bash
+# リポジトリをクローン
+git clone https://github.com/nikuteresa/getsumatsu_kun.git
+cd getsumatsu_kun
 
-## 8. 拡張性
-決定事項：
-- Slack通知の追加を想定した設計にする
-- 通知メソッドを抽象化して、将来的に他のチャネルを追加できるようにする
+# 依存パッケージのインストール
+bundle install
+```
 
-## 9. メンテナンス計画
-決定事項：
-- エラー通知: GitHub Actionsのデフォルト通知を利用（追加の通知は不要）
-- ログ形式: JSON形式
-- ログの保存場所: GitHubリポジトリ内
+## 設定方法
 
-## 10. 技術スタック
-- 言語: Ruby
-- プラットフォーム: GitHub Actions
-- 設定ファイル: YAML
-- ログ形式: JSON
+### 設定ファイル
 
-## 11. プロジェクト制約
-- 無料で運用可能であること
-- 最小限の実装から始め、必要に応じて機能拡張する
+`config/settings.yml` ファイルで通知設定をカスタマイズできます：
+
+```yaml
+# メール設定
+email:
+  # 送信先メールアドレス（複数可）
+  recipients:
+    - user1@example.com
+    - user2@example.com
+  # 通知時間（HH:MM形式）
+  default_time: "18:00"
+
+# 将来的にSlack通知も追加予定
+# slack:
+#   webhook_url: "https://hooks.slack.com/services/xxxxx/yyyyy/zzzzz"
+#   channel: "#general"
+#   username: "月末くん"
+```
+
+### 設定項目の説明
+
+| 設定項目 | 説明 | デフォルト値 |
+|--------|-----|------------|
+| `email.recipients` | メール通知の送信先（配列形式で複数指定可能） | `["default@example.com"]` |
+| `email.default_time` | 通知時間 (HH:MM形式) | `"18:00"` |
+
+### GitHub Secrets の設定
+
+GitHub Actions でメール送信を行うには、以下の Secrets を設定する必要があります：
+
+1. `MAIL_USERNAME`: メール送信に使用するアカウントのユーザー名
+2. `MAIL_PASSWORD`: メール送信に使用するアカウントのパスワード（Gmailの場合はアプリパスワード）
+3. `MAIL_FROM`: 送信元メールアドレス
+
+GitHub リポジトリの Settings > Secrets and variables > Actions から設定できます。
+
+## 使用方法
+
+### 手動実行
+
+```bash
+# 月末かどうかの判定と通知（テスト用）
+ruby main.rb
+```
+
+### 自動実行
+
+GitHub Actions により、毎日JST 18:00に自動実行されます。最終営業日の場合のみ通知が送信されます。
+
+手動で GitHub Actions ワークフローを実行するには、GitHub リポジトリの Actions タブから "Monthly End Notification" ワークフローを選択し、"Run workflow" ボタンをクリックします。
+
+## ログ
+
+通知履歴は `logs/notification_log.json` に記録されます。
+
+## トラブルシューティング
+
+### よくある問題
+
+1. **通知が送信されない**
+   - GitHub Secrets が正しく設定されているか確認
+   - ログファイルで実行履歴を確認
+
+2. **祝日判定が正しくない**
+   - holiday_japan gemが最新かどうか確認（`bundle update`）
+
+### デバッグ方法
+
+```bash
+# デバッグメッセージを表示して実行
+ruby -d main.rb
+```
+
+## ドキュメント
+
+- [要件定義書](doc/requirements.md)
+- [設計ドキュメント](doc/design.md)
+
+## ライセンス
+
+MIT
+
+## 貢献
+
+バグ報告や機能要望は GitHub Issues にお願いします。プルリクエストも歓迎します。
