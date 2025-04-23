@@ -1,0 +1,16 @@
+# 月末自動通知ツール設定ファイル
+
+# メール設定
+email:
+  # 送信先メールアドレス（複数可）
+  recipients:
+    - user1@example.com
+    - user2@example.com
+  # 通知時間（HH:MM形式）
+  default_time: "18:00"
+
+# 将来的にSlack通知も追加予定
+# slack:
+#   webhook_url: "https://hooks.slack.com/services/xxxxx/yyyyy/zzzzz"
+#   channel: "#general"
+#   username: "月末くん"

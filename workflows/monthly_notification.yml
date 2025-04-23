@@ -1,0 +1,55 @@
+name: Monthly End Notification
+
+on:
+  schedule:
+    # 毎日18時に実行（JST = UTC+9）
+    - cron: '0 9 * * *'  # UTC 9:00 = JST 18:00
+  # 手動実行用
+  workflow_dispatch:
+
+jobs:
+  send-notification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+          
+      - name: Install dependencies
+        run: |
+          gem install holiday_japan
+          gem install json
+          gem install yaml
+          
+      - name: Check if today is the last business day of month
+        id: check_day
+        run: |
+          # main.rbを実行して環境変数を設定
+          ruby main.rb >> $GITHUB_ENV
+        
+      - name: Send email notification
+        if: env.IS_LAST_BUSINESS_DAY == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: ${{ env.EMAIL_SUBJECT }}
+          to: ${{ env.EMAIL_TO }}
+          from: ${{ secrets.MAIL_FROM }}
+          body: ${{ env.EMAIL_BODY }}
+          
+      - name: Commit logs
+        if: env.IS_LAST_BUSINESS_DAY == 'true'
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git add logs/
+          git commit -m "Add notification log for $(date +'%Y-%m-%d')" || exit 0
+          git push
