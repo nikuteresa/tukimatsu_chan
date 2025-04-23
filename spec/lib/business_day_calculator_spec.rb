@@ -58,12 +58,21 @@ RSpec.describe BusinessDayCalculator do
   
   describe '#holiday?' do
     before do
+      # 元日のような通常の祝日
       allow(HolidayJapan).to receive(:name).with(Date.new(2025, 1, 1)).and_return('元日')
+      # 振替休日のケース
+      allow(HolidayJapan).to receive(:name).with(Date.new(2025, 5, 6)).and_return('振替休日')
+      # 平日（祝日ではない日）
       allow(HolidayJapan).to receive(:name).with(Date.new(2025, 4, 23)).and_return(nil)
     end
     
     it '祝日はtrueを返す' do
       date = Date.new(2025, 1, 1) # 元日
+      expect(calculator.holiday?(date)).to be true
+    end
+    
+    it '振替休日もtrueを返す' do
+      date = Date.new(2025, 5, 6) # 憲法記念日（5月3日）が日曜日の場合の振替休日
       expect(calculator.holiday?(date)).to be true
     end
     
