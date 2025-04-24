@@ -1,0 +1,48 @@
+name: Test & Validation
+
+on:
+  push:
+    branches: [ main, feature/**, fix/** ]
+  pull_request:
+    branches: [ main ]
+  # 手動実行用
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run RSpec Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+
+      - name: Run tests
+        run: bundle exec rspec
+
+  month-end-check:
+    name: Determine if today is the last business day
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run month-end determination
+        id: month_end_action
+        uses: ./
+
+      - name: Show result
+        run: |
+          echo "Is last business day: ${{ steps.month_end_action.outputs.is_last_business_day }}"
+          echo "Executed at: ${{ steps.month_end_action.outputs.executed_at }}"
