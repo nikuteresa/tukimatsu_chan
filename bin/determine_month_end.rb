@@ -21,7 +21,7 @@ class MonthEndDeterminer
       else
         File.open(env_file, 'a') do |file|
           file.puts "is_last_business_day=#{is_last_business_day}"
-          file.puts "executed_at_getsumatsu=#{date}"
+          file.puts "executed_at_getsumatsu_chan=#{date}"
         end
       end
     end
