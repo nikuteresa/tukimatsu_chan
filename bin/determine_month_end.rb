@@ -9,19 +9,23 @@ class MonthEndDeterminer
     @business_day_calculator = BusinessDayCalculator.new
   end
 
-  def run(date = Date.today)
-    is_last_business_day = @business_day_calculator.last_business_day_of_current_month?(date)
-    date = "#{date.year}年#{date.month}月#{date.day}日"
+  def run
+    # 日付は常に現在の日付（今日）を使用
+    date = Date.today
 
-    # 環境変数を設定
+    # 月末判定を実行
+    is_last_business_day = @business_day_calculator.last_business_day_of_current_month?(date)
+    formatted_date = "#{date.year}年#{date.month}月#{date.day}日"
+
+    # GitHub Actionsの出力を設定
     ENV['GITHUB_OUTPUT'].tap do |env_file|
       if env_file.nil?
         puts "is_last_business_day=#{is_last_business_day}"
-        puts "executed_at=#{date}"
+        puts "executed_at=#{formatted_date}"
       else
         File.open(env_file, 'a') do |file|
           file.puts "is_last_business_day=#{is_last_business_day}"
-          file.puts "executed_at=\"#{date}\""
+          file.puts "executed_at=\"#{formatted_date}\""
         end
       end
     end

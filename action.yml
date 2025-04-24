@@ -1,5 +1,5 @@
-name: 'Month-End Determination'
-description: 'Determines if today is the last business day of the month'
+name: 'Getsumatsu Chan - Japanese Month-End Detector'
+description: 'Determines if today is the last business day of the month in Japan'
 author: 'nikuteresa'
 branding:
   icon: 'calendar'
@@ -10,7 +10,7 @@ outputs:
     description: 'True if today is the last business day of the month'
     value: ${{ steps.check_month_end.outputs.is_last_business_day }}
   executed_at:
-    description: 'Current year and month (e.g., 2025年4月5日)'
+    description: 'Current date in Japanese format (e.g., 2025年4月30日)'
     value: ${{ steps.check_month_end.outputs.executed_at }}
 
 runs:
