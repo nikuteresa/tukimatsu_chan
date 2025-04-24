@@ -1,6 +1,6 @@
 # GitHub Marketplace 公開ガイド
 
-このドキュメントでは、getsumatsu_chan（月末ちゃん）をGitHub Marketplaceに公開するための手順と注意点を説明します。
+このドキュメントでは、tukimatsu_chan（月末ちゃん）をGitHub Marketplaceに公開するための手順と注意点を説明します。
 
 ## 1. 前提条件
 

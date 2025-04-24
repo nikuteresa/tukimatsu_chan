@@ -1,4 +1,4 @@
-# getsumatsu_chan (月末ちゃん)
+# tukimatsu_chan (月末ちゃん)
 
 月末の最終営業日を判定するGitHub Actionです。
 
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 月末判定
-        uses: nikuteresa/getsumatsu_chan@v1
+        uses: nikuteresa/tukimatsu_chan@v1
         id: month_end
 
       - name: 結果表示
@@ -66,7 +66,7 @@ jobs:
 ```yaml
 steps:
   - name: 月末判定
-    uses: nikuteresa/getsumatsu_chan@v1
+    uses: nikuteresa/tukimatsu_chan@v1
     id: month_end
 
   - name: 月末の場合のみ実行
@@ -81,7 +81,3 @@ steps:
 ## ライセンス
 
 MIT
-
-## 貢献
-
-バグ報告や機能要望は GitHub Issues にお願いします。プルリクエストも歓迎します。
