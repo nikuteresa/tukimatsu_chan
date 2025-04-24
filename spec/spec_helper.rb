@@ -40,9 +40,6 @@ RSpec.configure do |config|
     # Timecopをリセット
     Timecop.return
   end
-  
-  # 成功、失敗に関わらずすべてのテスト結果を表示
-  config.example_status_persistence_file_path = "spec/examples.txt"
 
   # 実行順序をランダムにする
   config.order = :random
