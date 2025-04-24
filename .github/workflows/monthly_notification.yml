@@ -17,57 +17,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Run month-end determination
         id: month_end_action
         uses: ./
-        
+
       - name: Show result
         run: |
           echo "Is last business day: ${{ steps.month_end_action.outputs.is_last_business_day }}"
           echo "Year and month: ${{ steps.month_end_action.outputs.year_month }}"
-
-  send-notification:
-    name: Send notification
-    needs: check-month-end
-    if: needs.check-month-end.outputs.is_last_business_day == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-          bundler-cache: true
-          
-      - name: Install dependencies
-        run: |
-          gem install holiday_japan
-          gem install json
-          
-      - name: Run notification script
-        run: |
-          # Set the environment variable from the previous job
-          export IS_LAST_BUSINESS_DAY=${{ needs.check-month-end.outputs.is_last_business_day }}
-          export YEAR_MONTH="${{ needs.check-month-end.outputs.year_month }}"
-          
-          # Run the notification script
-          ruby bin/send_notification.rb
-        
-      - name: Log notification preparation
-        run: |
-          echo "通知が準備されました"
-          echo "Subject: ${{ env.EMAIL_SUBJECT }}"
-          echo "To: ${{ env.EMAIL_TO }}"
-          
-      # メール送信部分は削除
-          
-      - name: Commit logs
-        run: |
-          git config --global user.name 'GitHub Actions'
-          git config --global user.email 'actions@github.com'
-          git add logs/
-          git commit -m "Add notification log for $(date +'%Y-%m-%d')" || exit 0
-          git push

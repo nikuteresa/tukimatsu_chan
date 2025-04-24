@@ -13,25 +13,20 @@ class MonthEndDeterminer
 
   def run(date = Date.today)
     config = @config_manager.load
-    
+
     is_last_business_day = @business_day_calculator.last_business_day_of_current_month?(date)
-    year_month = "#{date.year}年#{date.month}月"
-    
+    date = "#{date.year}年#{date.month}月#{date.day}日"
+
     # 環境変数を設定
-    set_environment_variables(is_last_business_day, year_month)
-    
-    # 結果を返す
-    {
-      is_last_business_day: is_last_business_day,
-      year_month: year_month
-    }
+    set_environment_variables(is_last_business_day, date)
+
   end
-  
+
   private
-  
-  def set_environment_variables(is_last_business_day, year_month)
+
+  def set_environment_variables(is_last_business_day, date)
     puts "IS_LAST_BUSINESS_DAY=#{is_last_business_day}"
-    puts "YEAR_MONTH=#{year_month}"
+    puts "YEAR_MONTH_DAY=#{date}"
   end
 end
 
