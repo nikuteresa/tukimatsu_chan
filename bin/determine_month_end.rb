@@ -14,15 +14,8 @@ class MonthEndDeterminer
     date = "#{date.year}年#{date.month}月#{date.day}日"
 
     # 環境変数を設定
-    set_environment_variables(is_last_business_day, date)
-
-  end
-
-  private
-
-  def set_environment_variables(is_last_business_day, date)
-    puts "IS_LAST_BUSINESS_DAY=#{is_last_business_day}"
-    puts "YEAR_MONTH_DAY=#{date}"
+    ENV['IS_GETSUMATSU_CHAN'] = is_last_business_day.to_s
+    ENV['EXECUTION_DATE_GETSUMATSU_CHAN'] = date
   end
 end
 

@@ -37,5 +37,5 @@ runs:
       shell: bash
       run: |
         # These values are set by the Ruby script as environment variables
-        echo "is_last_business_day=$IS_LAST_BUSINESS_DAY" >> $GITHUB_OUTPUT
-        echo "year_month=$YEAR_MONTH" >> $GITHUB_OUTPUT
+        echo "is_last_business_day=$IS_GETSUMATSU_CHAN" >> $GITHUB_OUTPUT
+        echo "executed_at=$EXECUTION_DATE_GETSUMATSU_CHAN" >> $GITHUB_OUTPUT
