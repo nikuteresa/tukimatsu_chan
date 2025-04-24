@@ -1,6 +1,7 @@
 # tukimatsu_chan (月末ちゃん)
 
 月末の最終営業日を判定するGitHub Actionです。
+Claude Desktop を使用して作成しています。
 
 ## 概要
 
@@ -10,10 +11,6 @@
 
 - 最終営業日の自動判定（土日祝日を除外）
 - 日本の祝日に対応（[holiday_japan](https://github.com/komagata/holiday_japan) gemを使用）
-
-## インストール方法
-
-GitHub Actionsワークフローで直接使用できます。リポジトリのクローンは不要です。
 
 ```yaml
 # ワークフローの例
