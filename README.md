@@ -53,7 +53,7 @@ jobs:
 ```yaml
 steps:
   - name: 月末判定
-    uses: nikuteresa/tukimatsu_chan@v1
+    uses: nikuteresa/tukimatsu_chan@v0.1.1
     id: month_end
 
   - name: 月末の場合のみ実行
