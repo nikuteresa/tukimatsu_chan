@@ -3,7 +3,7 @@ description: 'Determines if today is the last business day of the month in Japan
 author: 'nikuteresa'
 branding:
   icon: 'calendar'
-  color: 'blue'
+  color: 'green'
 
 outputs:
   is_last_business_day:
