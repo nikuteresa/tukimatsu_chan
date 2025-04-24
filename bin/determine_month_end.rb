@@ -2,18 +2,14 @@
 
 require 'date'
 require_relative '../lib/business_day_calculator'
-require_relative '../lib/config_manager'
 
 # 月末判定専用スクリプト
 class MonthEndDeterminer
   def initialize
     @business_day_calculator = BusinessDayCalculator.new
-    @config_manager = ConfigManager.new
   end
 
   def run(date = Date.today)
-    config = @config_manager.load
-
     is_last_business_day = @business_day_calculator.last_business_day_of_current_month?(date)
     date = "#{date.year}年#{date.month}月#{date.day}日"
 
