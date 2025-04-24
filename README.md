@@ -1,171 +1,206 @@
-# getsumatsu_kun (月末くん)
+# getsumatsu_chan (月末ちゃん)
 
-月末の最終営業日に通知を送信する自動ツールです。
+月末の最終営業日を判定するGitHub Actionです。
 
 ## 概要
 
-月末くんは、毎月の最終営業日を自動的に判定し、指定された宛先にメールで通知を送信するシンプルなツールです。GitHub Actionsを使用して定期的に実行され、祝日や土日を考慮して最終営業日を判定します。
+月末ちゃんは、指定された日付が月末の最終営業日（祝日や土日を除く）かどうかを判定するシンプルなGitHub Actionです。GitHub Actionsワークフローで利用でき、ワークフローの条件分岐などに活用できます。
 
 ## アーキテクチャ
 
-月末くんは以下の2つの主要コンポーネントで構成されています：
+月末ちゃんは単一の責務に特化したアクションです：
 
-1. **月末判定アクション** - 今日が月末の最終営業日かどうかを判定します（`action.yml`として実装）
-2. **通知処理** - 月末判定が真の場合にメール通知を送信します
+**月末判定アクション** - 指定された日付（デフォルトは今日）が月末の最終営業日かどうかを判定します（`action.yml`として実装）
 
-この分離されたアーキテクチャにより、判定ロジックと通知処理を独立して使用・テストできます。
+このシンプルな設計により、さまざまなワークフローに組み込みやすくなっています。
 
 ## 機能
 
 - 最終営業日の自動判定（土日祝日を除外）
-- 指定した複数のメールアドレスに通知
-- 通知履歴のログ記録
-- GitHub Actionsでの定期実行
+- 日本の祝日に対応
+- 柔軟なワークフロー連携
+- 明確な出力フォーマット
 
 ## インストール方法
 
-```bash
-# リポジトリをクローン
-git clone https://github.com/nikuteresa/getsumatsu_kun.git
-cd getsumatsu_kun
-
-# 依存パッケージのインストール
-bundle install
-```
-
-## 設定方法
-
-### 設定ファイル
-
-`config/settings.yml` ファイルで通知設定をカスタマイズできます：
+GitHub Actionsワークフローで直接使用できます。リポジトリのクローンは不要です。
 
 ```yaml
-# メール設定
-email:
-  # 送信先メールアドレス（複数可）
-  recipients:
-    - user1@example.com
-    - user2@example.com
-  # 通知時間（HH:MM形式）
-  default_time: "18:00"
+# ワークフローの例
+name: 月末チェック
 
-# 将来的にSlack通知も追加予定
-# slack:
-#   webhook_url: "https://hooks.slack.com/services/xxxxx/yyyyy/zzzzz"
-#   channel: "#general"
-#   username: "月末くん"
-```
+on:
+  schedule:
+    - cron: '0 9 * * *'  # UTC 9:00 = JST 18:00
+  workflow_dispatch:  # 手動実行用
 
-### 設定項目の説明
-
-| 設定項目 | 説明 | デフォルト値 |
-|--------|-----|------------|
-| `email.recipients` | メール通知の送信先（配列形式で複数指定可能） | `["default@example.com"]` |
-| `email.default_time` | 通知時間 (HH:MM形式) | `"18:00"` |
-
-### GitHub Secrets の設定
-
-GitHub Actions でメール送信を行うには、以下の Secrets を設定する必要があります：
-
-1. `MAIL_USERNAME`: メール送信に使用するアカウントのユーザー名
-2. `MAIL_PASSWORD`: メール送信に使用するアカウントのパスワード（Gmailの場合はアプリパスワード）
-3. `MAIL_FROM`: 送信元メールアドレス
-
-GitHub リポジトリの Settings > Secrets and variables > Actions から設定できます。
-
-## 使用方法
-
-### 手動実行
-
-```bash
-# 月末判定のみを実行
-ruby bin/determine_month_end.rb
-
-# 通知のみを実行（--forceを付けると月末判定を無視して強制送信）
-ruby bin/send_notification.rb [--force]
-
-# 両方の処理を順番に実行（開発環境・テスト用）
-ruby main.rb
-```
-
-### 自動実行
-
-GitHub Actions により、毎日JST 18:00に自動実行されます。最終営業日の場合のみ通知が送信されます。
-
-手動で GitHub Actions ワークフローを実行するには、GitHub リポジトリの Actions タブから "Monthly End Notification" ワークフローを選択し、"Run workflow" ボタンをクリックします。
-
-## アクションとして使用する
-
-このリポジトリは GitHub Action として使用することもできます：
-
-```yaml
 jobs:
-  my-job:
+  check-month-end:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if today is end of month
-        uses: nikuteresa/getsumatsu_kun@main
+      - name: 月末判定
+        uses: nikuteresa/getsumatsu_chan@v1
         id: month_end
-        
-      - name: Do something if it's end of month
+
+      - name: 結果表示
+        run: |
+          echo "最終営業日？: ${{ steps.month_end.outputs.is_last_business_day }}"
+          echo "日付: ${{ steps.month_end.outputs.executed_at }}"
+
+      - name: 月末の場合のみ実行
         if: steps.month_end.outputs.is_last_business_day == 'true'
-        run: echo "今日は月末です！"
+        run: echo "月末の処理を実行します"
 ```
 
-### アクション出力
+## 入力パラメータ
 
-| 出力名 | 説明 |
-|-------|-----|
-| `is_last_business_day` | 今日が月末の最終営業日の場合は「true」、そうでない場合は「false」 |
-| `year_month` | 現在の年月（例：「2025年4月」） |
+| パラメータ | 説明 | デフォルト値 | 必須 |
+|---------|------|-----------|------|
+| `date` | 判定対象の日付（YYYY-MM-DD形式） | 現在の日付 | いいえ |
 
-## テスト
+## 出力パラメータ
 
-テストは RSpec を使用して実装されています。テストを実行するには：
+| 出力名 | 説明 | 例 |
+|-------|------|----| 
+| `is_last_business_day` | 対象日が月末の最終営業日であれば `true`、そうでなければ `false` | `true` |
+| `executed_at` | 実行時の日付（日本語形式） | `2025年4月30日` |
+
+## 使用例
+
+### 基本的な使用方法
+
+```yaml
+steps:
+  - name: 月末判定
+    uses: nikuteresa/getsumatsu_chan@v1
+    id: month_end
+
+  - name: 月末の場合のみ実行
+    if: steps.month_end.outputs.is_last_business_day == 'true'
+    run: echo "月末の処理を実行します"
+```
+
+### 特定の日付を指定する場合
+
+```yaml
+steps:
+  - name: 特定日付の月末判定
+    uses: nikuteresa/getsumatsu_chan@v1
+    id: month_end
+    with:
+      date: '2025-04-30'
+
+  - name: 結果表示
+    run: echo "判定結果: ${{ steps.month_end.outputs.is_last_business_day }}"
+```
+
+## 応用例
+
+### 月末レポートの自動生成
+
+```yaml
+name: 月末レポート生成
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # UTC 9:00 = JST 18:00
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリのチェックアウト
+        uses: actions/checkout@v3
+
+      - name: 月末判定
+        uses: nikuteresa/getsumatsu_chan@v1
+        id: month_end
+
+      - name: レポート生成
+        if: steps.month_end.outputs.is_last_business_day == 'true'
+        run: |
+          echo "## ${{ steps.month_end.outputs.executed_at }} 月次レポート" > report.md
+          echo "月末処理が完了しました" >> report.md
+        
+      - name: レポートのコミット
+        if: steps.month_end.outputs.is_last_business_day == 'true'
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: 'report.md'
+          message: '${{ steps.month_end.outputs.executed_at }} 月次レポート'
+```
+
+### Slack通知との連携
+
+```yaml
+name: 月末Slack通知
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # UTC 9:00 = JST 18:00
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 月末判定
+        uses: nikuteresa/getsumatsu_chan@v1
+        id: month_end
+
+      - name: Slack通知
+        if: steps.month_end.outputs.is_last_business_day == 'true'
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {
+              "text": "${{ steps.month_end.outputs.executed_at }} - 今日は月末です！"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+```
+
+## 開発者向け情報
+
+### 動作環境
+
+- Ruby 3.2以上
+- 日本の祝日判定には `holiday_japan` gemを使用
+
+### テスト
+
+RSpecによるテストが実装されています。
 
 ```bash
 # すべてのテストを実行
 bundle exec rspec
 
-# 特定のテストファイルのみ実行
-bundle exec rspec spec/lib/business_day_calculator_spec.rb
-
-# テストカバレッジレポートを生成（結果は coverage/ ディレクトリに保存）
+# テストカバレッジレポートを生成
 COVERAGE=true bundle exec rspec
 ```
 
-### テスト構成
+### トラブルシューティング
 
-- `spec/lib/` - 各クラスの単体テスト
-- `spec/support/` - テスト用のヘルパーメソッド
+#### よくある問題
 
-## ログ
-
-通知履歴は `logs/notification_log.json` に記録されます。
-
-## トラブルシューティング
-
-### よくある問題
-
-1. **通知が送信されない**
-   - GitHub Secrets が正しく設定されているか確認
-   - ログファイルで実行履歴を確認
-
-2. **祝日判定が正しくない**
+1. **祝日判定が正しくない**
    - holiday_japan gemが最新かどうか確認（`bundle update`）
 
-### デバッグ方法
+2. **GitHub Actionsでエラーが発生する**
+   - Rubyバージョンの互換性を確認
+   - ワークフローのログで詳細を確認
+
+#### デバッグ方法
+
+ローカル環境でテストする場合：
 
 ```bash
 # デバッグメッセージを表示して実行
 ruby -d bin/determine_month_end.rb
-ruby -d bin/send_notification.rb
 ```
 
-## ドキュメント
+## 謝辞
 
-- [要件定義書](doc/requirements.md)
-- [設計ドキュメント](doc/design.md)
+- 日本の祝日判定には [holiday_japan](https://github.com/komagata/holiday_japan) gemを使用しています
 
 ## ライセンス
 
