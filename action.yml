@@ -1,22 +1,16 @@
 name: 'Getsumatsu Chan - Japanese Month-End Detector'
-description: 'Determines if a date is the last business day of the month in Japan'
+description: 'Determines if today is the last business day of the month in Japan'
 author: 'nikuteresa'
 branding:
   icon: 'calendar'
   color: 'blue'
 
-inputs:
-  date:
-    description: 'Date to check in YYYY-MM-DD format (defaults to today)'
-    required: false
-    default: ''
-
 outputs:
   is_last_business_day:
-    description: 'True if the date is the last business day of the month'
+    description: 'True if today is the last business day of the month'
     value: ${{ steps.check_month_end.outputs.is_last_business_day }}
   executed_at:
-    description: 'Date in Japanese format (e.g., 2025年4月30日)'
+    description: 'Current date in Japanese format (e.g., 2025年4月30日)'
     value: ${{ steps.check_month_end.outputs.executed_at }}
 
 runs:
@@ -36,8 +30,6 @@ runs:
     - name: Run month-end determination
       id: check_month_end
       shell: bash
-      env:
-        INPUT_DATE: ${{ inputs.date }}
       run: |
         # Run the month-end determination script
         ruby ${{ github.action_path }}/bin/determine_month_end.rb
