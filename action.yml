@@ -31,11 +31,3 @@ runs:
       run: |
         # Run the month-end determination script
         ruby ${{ github.action_path }}/bin/determine_month_end.rb
-      
-    - name: Set output variables
-      id: set_output
-      shell: bash
-      run: |
-        # These values are set by the Ruby script as environment variables
-        echo "is_last_business_day=$IS_GETSUMATSU_CHAN" >> $GITHUB_OUTPUT
-        echo "executed_at=$EXECUTION_DATE_GETSUMATSU_CHAN" >> $GITHUB_OUTPUT

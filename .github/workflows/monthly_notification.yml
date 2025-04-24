@@ -25,4 +25,4 @@ jobs:
       - name: Show result
         run: |
           echo "Is last business day: ${{ steps.month_end_action.outputs.is_last_business_day }}"
-          echo "executed_at: ${{ steps.month_end_action.outputs.executed_at }}"
+          echo "executed_at: ${{ steps.month_end_action.outputs.executed_at_getsumatsu }}"

@@ -14,8 +14,17 @@ class MonthEndDeterminer
     date = "#{date.year}年#{date.month}月#{date.day}日"
 
     # 環境変数を設定
-    ENV['IS_GETSUMATSU_CHAN'] = is_last_business_day.to_s
-    ENV['EXECUTION_DATE_GETSUMATSU_CHAN'] = date
+    ENV['GITHUB_ENV'].tap do |env_file|
+      if env_file.nil?
+        puts "IS_GETSUMATSU_CHAN=#{is_last_business_day}"
+        puts "EXECUTION_DATE_GETSUMATSU_CHAN=#{date}"
+      else
+        File.open(env_file, 'a') do |file|
+          file.puts "is_last_business_day=#{is_last_business_day}"
+          file.puts "executed_at_getsumatsu=#{date}"
+        end
+      end
+    end
   end
 end
 
