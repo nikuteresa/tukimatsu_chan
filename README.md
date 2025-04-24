@@ -17,7 +17,7 @@
 ## 機能
 
 - 最終営業日の自動判定（土日祝日を除外）
-- 日本の祝日に対応
+- 日本の祝日に対応（[holiday_japan](https://github.com/komagata/holiday_japan) gemを使用）
 - 柔軟なワークフロー連携
 - 明確な出力フォーマット
 
@@ -79,7 +79,7 @@ steps:
 ### 動作環境
 
 - Ruby 3.2以上
-- 日本の祝日判定には `holiday_japan` gemを使用
+- 日本の祝日判定には [holiday_japan](https://github.com/komagata/holiday_japan) gemを使用
 
 ### テスト
 
