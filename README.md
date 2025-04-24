@@ -2,6 +2,8 @@
 
 月末の最終営業日を判定するGitHub Actionです。
 
+[![Test & Validation](https://github.com/nikuteresa/getsumatsu_chan/actions/workflows/testing.yml/badge.svg)](https://github.com/nikuteresa/getsumatsu_chan/actions/workflows/testing.yml)
+
 ## 概要
 
 月末ちゃんは、今日が月末の最終営業日（祝日や土日を除く）かどうかを判定するシンプルなGitHub Actionです。GitHub Actionsワークフローで利用でき、ワークフローの条件分岐などに活用できます。
@@ -73,6 +75,13 @@ steps:
     if: steps.month_end.outputs.is_last_business_day == 'true'
     run: echo "月末の処理を実行します"
 ```
+
+## 継続的インテグレーション
+
+このリポジトリでは以下のワークフローを使用しています：
+
+1. **Test & Validation**: プッシュやプルリクエスト時に自動的にテストを実行し、機能が正常に動作することを確認します。
+2. **Monthly End Notification**: 毎日定時に実行され、月末の最終営業日かどうかをチェックします。
 
 ## 謝辞
 
