@@ -74,45 +74,6 @@ steps:
     run: echo "月末の処理を実行します"
 ```
 
-## 開発者向け情報
-
-### 動作環境
-
-- Ruby 3.2以上
-- 日本の祝日判定には [holiday_japan](https://github.com/komagata/holiday_japan) gemを使用
-
-### テスト
-
-RSpecによるテストが実装されています。
-
-```bash
-# すべてのテストを実行
-bundle exec rspec
-
-# テストカバレッジレポートを生成
-COVERAGE=true bundle exec rspec
-```
-
-### トラブルシューティング
-
-#### よくある問題
-
-1. **祝日判定が正しくない**
-   - holiday_japan gemが最新かどうか確認（`bundle update`）
-
-2. **GitHub Actionsでエラーが発生する**
-   - Rubyバージョンの互換性を確認
-   - ワークフローのログで詳細を確認
-
-#### デバッグ方法
-
-ローカル環境でテストする場合：
-
-```bash
-# デバッグメッセージを表示して実行
-ruby -d bin/determine_month_end.rb
-```
-
 ## 謝辞
 
 - 日本の祝日判定には [holiday_japan](https://github.com/komagata/holiday_japan) gemを使用しています
