@@ -9,7 +9,7 @@ on:
 
 jobs:
   check-month-end:
-    name: Determine if today is the last business day
+    name: Check for month end and notify
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -22,4 +22,9 @@ jobs:
       - name: Show result
         run: |
           echo "Is last business day: ${{ steps.month_end_action.outputs.is_last_business_day }}"
-          echo "executed_at: ${{ steps.month_end_action.outputs.executed_at }}"
+          echo "Executed at: ${{ steps.month_end_action.outputs.executed_at }}"
+
+      - name: Log month-end check
+        if: steps.month_end_action.outputs.is_last_business_day == 'true'
+        run: |
+          echo "🎉 Today is the last business day of the month! Execution time: $(date)"
