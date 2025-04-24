@@ -16,12 +16,12 @@ class MonthEndDeterminer
     # 環境変数を設定
     ENV['GITHUB_OUTPUT'].tap do |env_file|
       if env_file.nil?
-        puts "IS_GETSUMATSU_CHAN=#{is_last_business_day}"
-        puts "EXECUTION_DATE_GETSUMATSU_CHAN=#{date}"
+        puts "is_last_business_day=#{is_last_business_day}"
+        puts "executed_at=#{date}"
       else
         File.open(env_file, 'a') do |file|
           file.puts "is_last_business_day=#{is_last_business_day}"
-          file.puts "executed_at_getsumatsu_chan=\"#{date}\""
+          file.puts "executed_at=\"#{date}\""
         end
       end
     end
