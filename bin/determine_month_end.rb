@@ -10,18 +10,8 @@ class MonthEndDeterminer
   end
 
   def run
-    # 環境変数から日付を取得（指定がなければ今日の日付を使用）
-    date_str = ENV['INPUT_DATE']
-    date = if date_str && !date_str.empty?
-      begin
-        Date.parse(date_str)
-      rescue ArgumentError
-        puts "Error: Invalid date format '#{date_str}'. Using today's date instead."
-        Date.today
-      end
-    else
-      Date.today
-    end
+    # 日付は常に現在の日付（今日）を使用
+    date = Date.today
 
     # 月末判定を実行
     is_last_business_day = @business_day_calculator.last_business_day_of_current_month?(date)
