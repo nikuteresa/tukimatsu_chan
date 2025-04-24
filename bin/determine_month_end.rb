@@ -10,6 +10,7 @@ class MonthEndDeterminer
   end
 
   def run
+    ENV['TZ'] = 'Asia/Tokyo' # タイムゾーンを東京に設定
     # 日付は常に現在の日付（今日）を使用
     date = Date.today
 
