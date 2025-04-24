@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'date'
+require 'time'
 require_relative '../lib/business_day_calculator'
 
 # 月末判定専用スクリプト
@@ -11,7 +11,7 @@ class MonthEndDeterminer
 
   def run
     ENV['TZ'] = 'Asia/Tokyo' # タイムゾーンを東京に設定
-    date = Date.today
+    date = Time.now.to_date
 
     # 月末判定を実行
     is_last_business_day = @business_day_calculator.last_business_day_of_current_month?(date)
