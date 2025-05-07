@@ -1,0 +1,22 @@
+name: demo
+
+on:
+  schedule:
+    - cron: '0 9 * * *'  # UTC 9:00 = JST 18:00
+  workflow_dispatch:  # 手動実行用
+jobs:
+  check-month-end:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 月末判定
+        uses: nikuteresa/tukimatsu_chan@v0.1.2
+        id: month_end
+
+      - name: 結果表示
+        run: |
+          echo "最終営業日？: ${{ steps.month_end.outputs.is_last_business_day }}"
+          echo "日付: ${{ steps.month_end.outputs.executed_at }}"
+
+      - name: 月末の場合のみ実行
+        if: steps.month_end.outputs.is_last_business_day == 'true'
+        run: echo "月末の処理を実行します" 
