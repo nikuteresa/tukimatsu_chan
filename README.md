@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: 月末判定
-        uses: nikuteresa/tukimatsu_chan@v1.0.2
+        uses: nikuteresa/tukimatsu_chan@v0.1.2
         id: month_end
 
       - name: 結果表示
