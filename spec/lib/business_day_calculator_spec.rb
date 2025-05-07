@@ -110,7 +110,6 @@ RSpec.describe BusinessDayCalculator do
   describe '#last_business_day_of_current_month?' do
     context '当日が最終営業日の場合' do
       before do
-        date = Date.new(2025, 4, 29)
         # 4月29日は営業日
         allow(calculator).to receive(:last_business_day_of_month).with(2025, 4).and_return(Date.new(2025, 4, 29))
       end
@@ -122,7 +121,6 @@ RSpec.describe BusinessDayCalculator do
 
     context '当日が最終営業日でない場合' do
       before do
-        date = Date.new(2025, 4, 28)
         # 4月28日は営業日
         allow(calculator).to receive(:last_business_day_of_month).with(2025, 4).and_return(Date.new(2025, 4, 29))
       end
