@@ -33,4 +33,5 @@ runs:
       shell: bash
       run: |
         # Run the month-end determination script
-        ruby ${{ github.action_path }}/bin/determine_month_end.rb
+        cd ${{ github.action_path }}
+        bundle exec ruby ${{ github.action_path }}/bin/determine_month_end.rb
