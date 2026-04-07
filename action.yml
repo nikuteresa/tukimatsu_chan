@@ -20,7 +20,7 @@ runs:
       uses: ruby/setup-ruby@v1
       with:
         ruby-version: '3.2'
-        bundler-cache: false
+        bundler-cache: true
       
     - name: Install dependencies
       shell: bash
@@ -33,4 +33,5 @@ runs:
       shell: bash
       run: |
         # Run the month-end determination script
-        ruby ${{ github.action_path }}/bin/determine_month_end.rb
+        cd ${{ github.action_path }}
+        bundle exec ruby ${{ github.action_path }}/bin/determine_month_end.rb
